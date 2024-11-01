@@ -34,6 +34,8 @@ menuItems.forEach(item => {
 
 // Referencias a los elementos HTML
 let botonBuscar = document.getElementById('btn-search') as HTMLButtonElement;
+let inputBusqueda = document.getElementById('input-search') as HTMLInputElement;
+let spanErrores = document.getElementById('span-errores') as HTMLElement;
 let card = document.getElementById('card') as HTMLElement;
 let elementoTitulo = document.getElementById('card-title') as HTMLElement;
 let elemento1 = document.getElementById("li-data1") as HTMLElement | null;
@@ -41,9 +43,24 @@ let elemento2 = document.getElementById("li-data2") as HTMLElement | null;
 
 // Funcion asincrona para buscar pais en el array de paises
 async function buscarPais(): Promise<void> {
-    // Llamada a funcion que busca paises en la API
-    let paises = await obtenerPaises();
-    mostrarPais(paises[0]);
+    let query = inputBusqueda.value.trim();
+    // si no hay texto en el input, muestra error
+    if (!query) {
+        spanErrores.textContent = "Por favor, introduce un término de búsqueda.";
+        return;
+    } else {
+        //Si hay texto en el input, quita el error
+        spanErrores.textContent = "";
+    }
+    // Llamada funcion que obtine paises en la API
+    let paises = await obtenerPaises(query);
+    // Si existe algun pais
+    if (paises.length > 0) {
+        //Muestra el primer pais
+        mostrarPais(paises[0]);
+    } else {
+        spanErrores.textContent = "No se encontraron resultados para esta búsqueda.";
+    }
 }
 
 // Funcion mostrar datos de pais en card
@@ -68,9 +85,9 @@ async function mostrarPais(pais: Pais): Promise<void> {
 }
 
 // funcion obtener todos paises de la API
-async function obtenerPaises(): Promise<Pais[]> {
+async function obtenerPaises(query: string): Promise<Pais[]> {
     try {
-        let response = await fetch(`https://restcountries.com/v3.1/all`);
+        let response = await fetch(`https://restcountries.com/v3.1/name/${query}`);
         // Compruebo si la respuesta es correcta
         let arrayPaises: [] = await response.json();
         //Paso del json a objetos Pais
