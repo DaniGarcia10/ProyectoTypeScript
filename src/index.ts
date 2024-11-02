@@ -40,6 +40,12 @@ let card = document.getElementById('card') as HTMLElement;
 let elementoTitulo = document.getElementById('card-title') as HTMLElement;
 let elemento1 = document.getElementById("li-data1") as HTMLElement | null;
 let elemento2 = document.getElementById("li-data2") as HTMLElement | null;
+let botonSiguiente = document.getElementById('next-element') as HTMLButtonElement;
+let botonAnterior = document.getElementById('previous-element') as HTMLButtonElement;
+
+// Variables navegacion
+let indiceActual = 0;
+let paises: Pais[] = [];
 
 // Funcion asincrona para buscar pais en el array de paises
 async function buscarPais(): Promise<void> {
@@ -53,14 +59,15 @@ async function buscarPais(): Promise<void> {
         spanErrores.textContent = "";
     }
     // Llamada funcion que obtine paises en la API
-    let paises = await obtenerPaises(query);
+    paises = await obtenerPaises(query);
     // Si existe algun pais
     if (paises.length > 0) {
         //Almacena datos en sessionStorage
         sessionStorage.setItem('StoragePaises', JSON.stringify(paises));
         console.log(sessionStorage);
         //Muestra el primer pais
-        mostrarPais(paises[0]);
+        indiceActual = 0;
+        mostrarPais(paises[indiceActual]);
     } else {
         spanErrores.textContent = "No se encontraron resultados para esta búsqueda.";
     }
@@ -87,6 +94,23 @@ async function mostrarPais(pais: Pais): Promise<void> {
     }
 }
 
+//Funcion mostrar siguiente pais
+function mostrarSiguientePais(): void {
+    if (indiceActual < paises.length -1) {
+        indiceActual++;
+        console.log(paises);
+        mostrarPais(paises[indiceActual]);
+    }
+}
+
+//Funcion mostrar pais anterior
+function mostrarAnteriorPais(): void {
+    if (indiceActual > 0) {
+        indiceActual--;
+        mostrarPais(paises[indiceActual]);
+    }
+}
+
 // funcion obtener todos paises de la API
 async function obtenerPaises(query: string): Promise<Pais[]> {
     try {
@@ -101,5 +125,11 @@ async function obtenerPaises(query: string): Promise<Pais[]> {
     }
 }
 
-//Evento clic en el boton buscar
+//Evento clic boton buscar
 botonBuscar.addEventListener('click', buscarPais);
+
+// Evento clic boton siguiente
+botonSiguiente.addEventListener('click', mostrarSiguientePais);
+
+// Evento clic boton anterior
+botonAnterior.addEventListener('click', mostrarAnteriorPais);
