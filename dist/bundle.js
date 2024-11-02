@@ -57,6 +57,12 @@ let card = document.getElementById('card');
 let elementoTitulo = document.getElementById('card-title');
 let elemento1 = document.getElementById("li-data1");
 let elemento2 = document.getElementById("li-data2");
+let botonSiguiente = document.getElementById('next-element');
+let botonAnterior = document.getElementById('previous-element');
+let estrellaFavorito = document.getElementById('favorite-star');
+// Variables navegacion
+let indiceActual = 0;
+let paises = [];
 // Funcion asincrona para buscar pais en el array de paises
 function buscarPais() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -71,13 +77,15 @@ function buscarPais() {
             spanErrores.textContent = "";
         }
         // Llamada funcion que obtine paises en la API
-        let paises = yield obtenerPaises(query);
+        paises = yield obtenerPaises(query);
         // Si existe algun pais
         if (paises.length > 0) {
             //Almacena datos en sessionStorage
-            sessionStorage.setItem('paises', JSON.stringify(paises));
+            sessionStorage.setItem('StoragePaises', JSON.stringify(paises));
+            console.log(sessionStorage);
             //Muestra el primer pais
-            mostrarPais(paises[0]);
+            indiceActual = 0;
+            mostrarPais(paises[indiceActual]);
         }
         else {
             spanErrores.textContent = "No se encontraron resultados para esta búsqueda.";
@@ -107,6 +115,20 @@ function mostrarPais(pais) {
         }
     });
 }
+//Funcion mostrar siguiente pais
+function mostrarSiguientePais() {
+    if (indiceActual < paises.length - 1) {
+        indiceActual++;
+        mostrarPais(paises[indiceActual]);
+    }
+}
+//Funcion mostrar pais anterior
+function mostrarAnteriorPais() {
+    if (indiceActual > 0) {
+        indiceActual--;
+        mostrarPais(paises[indiceActual]);
+    }
+}
 // funcion obtener todos paises de la API
 function obtenerPaises(query) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -115,7 +137,7 @@ function obtenerPaises(query) {
             // Compruebo si la respuesta es correcta
             let arrayPaises = yield response.json();
             //Paso del json a objetos Pais
-            return arrayPaises.map((item) => new Pais_1.default(item.cca3, item.name.common, item.capital, item.region));
+            return arrayPaises.map((item) => new Pais_1.default(item.ccn3, item.name.common, item.capital, item.region));
         }
         catch (error) {
             console.error("Error al obtener los datos de los países", error);
@@ -123,8 +145,19 @@ function obtenerPaises(query) {
         }
     });
 }
-//Evento clic en el boton buscar
+//Evento clic boton buscar
 botonBuscar.addEventListener('click', buscarPais);
+// Evento clic boton siguiente
+botonSiguiente.addEventListener('click', mostrarSiguientePais);
+// Evento clic boton anterior
+botonAnterior.addEventListener('click', mostrarAnteriorPais);
+// Evento mouseover y mouseout para la estrella de favorito
+estrellaFavorito.addEventListener('mouseover', () => {
+    estrellaFavorito.classList.add('filled');
+});
+estrellaFavorito.addEventListener('mouseout', () => {
+    estrellaFavorito.classList.remove('filled');
+});
 
 
 /***/ }),

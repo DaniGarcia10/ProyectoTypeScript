@@ -42,6 +42,8 @@ let elemento1 = document.getElementById("li-data1") as HTMLElement | null;
 let elemento2 = document.getElementById("li-data2") as HTMLElement | null;
 let botonSiguiente = document.getElementById('next-element') as HTMLButtonElement;
 let botonAnterior = document.getElementById('previous-element') as HTMLButtonElement;
+let estrellaFavorito = document.getElementById('star-fav') as HTMLElement;
+
 
 // Variables navegacion
 let indiceActual = 0;
@@ -98,7 +100,6 @@ async function mostrarPais(pais: Pais): Promise<void> {
 function mostrarSiguientePais(): void {
     if (indiceActual < paises.length -1) {
         indiceActual++;
-        console.log(paises);
         mostrarPais(paises[indiceActual]);
     }
 }
@@ -133,3 +134,13 @@ botonSiguiente.addEventListener('click', mostrarSiguientePais);
 
 // Evento clic boton anterior
 botonAnterior.addEventListener('click', mostrarAnteriorPais);
+
+//Eventos mouseover y mouseout para la estrella de favorito
+estrellaFavorito.addEventListener('mouseover', () => {
+    estrellaFavorito.classList.remove('bi-star');
+    estrellaFavorito.classList.add('bi-star-fill');
+});
+estrellaFavorito.addEventListener('mouseout', () => {
+    estrellaFavorito.classList.remove('bi-star-fill');
+    estrellaFavorito.classList.add('bi-star');
+});
