@@ -6,6 +6,7 @@ let menuItems = document.querySelectorAll('.nav-link');
 // Divisores
 let divisorBusqueda = document.getElementById('div-search') as HTMLElement;
 let divisorFavoritos = document.getElementById('div-data-storage') as HTMLElement;
+let tablaFavoritos = document.getElementById('table-favs') as HTMLTableElement;
 
 //Funcion click
 function handleMenuClick(event: Event): void {
@@ -23,6 +24,7 @@ function handleMenuClick(event: Event): void {
     } else if (target.id === 'a-data-storage') {
         divisorBusqueda.classList.add('d-none');
         divisorFavoritos.classList.remove('d-none');
+        mostrarFavoritos();
     }
 
 }
@@ -175,3 +177,24 @@ estrellaFavorito.addEventListener('click', () => {
     // Almacenar en localStorage
     localStorage.setItem('favoritos', JSON.stringify(favoritos));
 });
+
+// Funcion mostrar favoritos
+function mostrarFavoritos(): void {
+    let tbody = tablaFavoritos.querySelector('tbody');
+    if (tbody) {
+        //Vaciar tabla
+        tbody.innerHTML = '';
+        favoritos.forEach(pais => {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${pais.id}</td>
+                <td>${pais.nombre}</td>
+                <td>${pais.capital}</td>
+                <td>${pais.region}</td>
+                <td><i class="bi bi-trash"></i></td>
+            `;
+            // Evento clic en la papelera
+            tbody.appendChild(row);
+        });
+    }
+}
