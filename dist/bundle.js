@@ -23,118 +23,99 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const Pais_1 = __importDefault(__webpack_require__(/*! ./models/Pais */ "./src/models/Pais.ts"));
-// Variables para controlar la navegación
-let indexActual = 0;
-// Array de paises para listar
-let paises = [];
+//Elementoos del menu
+let menuItems = document.querySelectorAll('.nav-link');
+// Divisores
+let divisorBusqueda = document.getElementById('div-search');
+let divisorFavoritos = document.getElementById('div-data-storage');
+//Funcion click
+function handleMenuClick(event) {
+    //Elimina active de todos los elementos
+    menuItems.forEach(item => item.classList.remove('active'));
+    //Añadir active al elemento clicado
+    const target = event.target;
+    target.classList.add('active');
+    // Controlar la visibilidad de los divisores
+    if (target.id === 'a-search') {
+        divisorBusqueda.classList.remove('d-none');
+        divisorFavoritos.classList.add('d-none');
+    }
+    else if (target.id === 'a-data-storage') {
+        divisorBusqueda.classList.add('d-none');
+        divisorFavoritos.classList.remove('d-none');
+    }
+}
+//evento de clic a todos los elemento del menu
+menuItems.forEach(item => {
+    item.addEventListener('click', handleMenuClick);
+});
 // Referencias a los elementos HTML
-let btnsearch = document.getElementById('btn-search');
-let inputsearch = document.getElementById('input-search');
+let botonBuscar = document.getElementById('btn-search');
+let inputBusqueda = document.getElementById('input-search');
+let spanErrores = document.getElementById('span-errores');
 let card = document.getElementById('card');
-let cardTitle = document.getElementById('card-title');
-let liData1 = document.getElementById("li-data1");
-let liData2 = document.getElementById("li-data2");
-let spanErrores = document.getElementById("span-errores");
-let previousBtn = document.getElementById("previous-element");
-let nextBtn = document.getElementById("next-element");
-let container = document.getElementById('container');
-// Función asíncrona para obtener los datos de la API https://restcountries.com/v3.1/all
+let elementoTitulo = document.getElementById('card-title');
+let elemento1 = document.getElementById("li-data1");
+let elemento2 = document.getElementById("li-data2");
+// Funcion asincrona para buscar pais en el array de paises
 function buscarPais() {
     return __awaiter(this, void 0, void 0, function* () {
-        let query = inputsearch.value.trim();
-        // Si el campo de búsqueda está vacío, muestra un mensaje de error
+        let query = inputBusqueda.value.trim();
+        // si no hay texto en el input, muestra error
         if (!query) {
             spanErrores.textContent = "Por favor, introduce un término de búsqueda.";
             return;
         }
         else {
-            // Si hay texto en el campo, borra el mensaje de error
+            //Si hay texto en el input, quita el error
             spanErrores.textContent = "";
         }
-        // Llama a la función que busca países en la API
-        paises = yield obtenerPaises(query);
-        // Si existe algún país...
+        // Llamada funcion que obtine paises en la API
+        let paises = yield obtenerPaises(query);
+        // Si existe algun pais
         if (paises.length > 0) {
-            // Limpio primero
-            let paisesCompletos = [];
-            // Luego obtengo detalles completos de cada país
-            for (let p of paises) {
-                let paisCompleto = yield obtenerDetallesPais(p.getId());
-                if (paisCompleto) {
-                    paisesCompletos.push(paisCompleto);
-                }
-            }
-            paises = paisesCompletos;
-            // Muestro el primer país si hay elementos
-            if (paises.length > 0) {
-                indexActual = 0; // Restablezco el índice de inicio
-                mostrarPais(); // Muestra el primer país
-                displayData(paises); // Muestra los resultados en el contenedor container
-            }
-            else {
-                spanErrores.textContent = "No se pudieron cargar los detalles de los países.";
-            }
+            //Almacena datos en sessionStorage
+            sessionStorage.setItem('paises', JSON.stringify(paises));
+            //Muestra el primer pais
+            mostrarPais(paises[0]);
         }
         else {
             spanErrores.textContent = "No se encontraron resultados para esta búsqueda.";
         }
     });
 }
-// Función para mostrar los datos de un país en la tarjeta (card)
-function mostrarPais() {
-    let pais = paises[indexActual];
-    // Usamos indexActual para obtener el país actual
-    if (pais) {
-        cardTitle.textContent = pais.getNombre();
-        // Verifico que los elementos existen
-        if (liData1) {
-            liData1.textContent = `Capital: ${pais.getCapital() || 'Desconocida'}`;
+// Funcion mostrar datos de pais en card
+function mostrarPais(pais) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //Compruebo que el pais existe
+        if (pais) {
+            card.classList.remove('d-none');
+            elementoTitulo.textContent = pais.getNombre();
+            //compruebo que los elementos existen
+            if (elemento1) {
+                elemento1.textContent = `Capital: ${pais.getCapital() || 'Desconocida'}`;
+            }
+            else {
+                console.warn("Elemento li-data1 no encontrado");
+            }
+            if (elemento2) {
+                elemento2.textContent = `Región: ${pais.getRegion() || 'Desconocida'}`;
+            }
+            else {
+                console.warn("Elemento li-data2 no encontrado");
+            }
         }
-        else {
-            console.warn("Elemento li-data1 no encontrado");
-        }
-        if (liData2) {
-            liData2.textContent = ` Región: ${pais.getRegion() || 'Desconocida'}`;
-        }
-        else {
-            console.warn("Elemento li-data2 no encontrado");
-        }
-    }
-}
-// Función para mostrar los datos en el contenedor container
-function displayData(data) {
-    if (!container) {
-        console.error('Contenedor de datos no encontrado');
-        return;
-    }
-    container.innerHTML = '';
-    data.forEach((pais) => {
-        const div = document.createElement('div');
-        div.className = 'col-12 col-md-6 col-lg-4';
-        div.innerHTML = `
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5 class="card-title">${pais.getNombre()}</h5>
-                    <p class="card-text">Capital: ${pais.getCapital()}</p>
-                    <p class="card-text">Región: ${pais.getRegion()}</p>
-                </div>
-            </div>
-        `;
-        container.appendChild(div);
     });
 }
-// Función para obtener los países de la API
+// funcion obtener todos paises de la API
 function obtenerPaises(query) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // Llamo a la API
             let response = yield fetch(`https://restcountries.com/v3.1/name/${query}`);
-            let data = yield response.json();
-            if (!data || data.status === 404) {
-                return [];
-            }
-            // Convierto los datos en objetos Pais
-            return data.map((item) => new Pais_1.default(item.cca3, item.name.common, item.capital ? item.capital[0] : 'Desconocida', item.region));
+            // Compruebo si la respuesta es correcta
+            let arrayPaises = yield response.json();
+            //Paso del json a objetos Pais
+            return arrayPaises.map((item) => new Pais_1.default(item.cca3, item.name.common, item.capital, item.region));
         }
         catch (error) {
             console.error("Error al obtener los datos de los países", error);
@@ -142,26 +123,8 @@ function obtenerPaises(query) {
         }
     });
 }
-// Función para obtener los detalles de un país
-function obtenerDetallesPais(id) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            let response = yield fetch(`https://restcountries.com/v3.1/alpha/${id}`);
-            let data = yield response.json();
-            if (!data) {
-                return null;
-            }
-            let item = data[0];
-            return new Pais_1.default(item.cca3, item.name.common, item.capital ? item.capital[0] : 'Desconocida', item.region);
-        }
-        catch (error) {
-            console.error("Error al obtener los datos del país", error);
-            return null;
-        }
-    });
-}
-// Evento de clic en el botón de búsqueda
-btnsearch.addEventListener('click', buscarPais);
+//Evento clic en el boton buscar
+botonBuscar.addEventListener('click', buscarPais);
 
 
 /***/ }),

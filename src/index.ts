@@ -56,6 +56,9 @@ async function buscarPais(): Promise<void> {
     let paises = await obtenerPaises(query);
     // Si existe algun pais
     if (paises.length > 0) {
+        //Almacena datos en sessionStorage
+        sessionStorage.setItem('StoragePaises', JSON.stringify(paises));
+        console.log(sessionStorage);
         //Muestra el primer pais
         mostrarPais(paises[0]);
     } else {
@@ -91,7 +94,7 @@ async function obtenerPaises(query: string): Promise<Pais[]> {
         // Compruebo si la respuesta es correcta
         let arrayPaises: [] = await response.json();
         //Paso del json a objetos Pais
-        return arrayPaises.map((item: any) => new Pais(item.cca3, item.name.common, item.capital, item.region));
+        return arrayPaises.map((item: any) => new Pais(item.ccn3, item.name.common, item.capital, item.region));
     } catch (error) {
         console.error("Error al obtener los datos de los países", error);
         return [];
