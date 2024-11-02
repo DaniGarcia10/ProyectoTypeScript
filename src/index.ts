@@ -193,8 +193,21 @@ function mostrarFavoritos(): void {
                 <td>${pais.region}</td>
                 <td><i class="bi bi-trash"></i></td>
             `;
-            // Evento clic en la papelera
+            //Añade las filas
             tbody.appendChild(row);
+
+            //Eventos mouseover y mouseout papelera
+            let papelera = row.querySelector('.bi-trash') as HTMLElement;
+            papelera.addEventListener('mouseover', () => {
+                papelera.classList.remove('bi-trash');
+                papelera.classList.add('bi-trash-fill');
+            });
+
+            papelera.addEventListener('mouseout', () => {
+                papelera.classList.remove('bi-trash-fill');
+                papelera.classList.add('bi-trash');
+            });
+
         });
     }
 }
