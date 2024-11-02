@@ -48,6 +48,8 @@ let estrellaFavorito = document.getElementById('star-fav') as HTMLElement;
 // Variables navegacion
 let indiceActual = 0;
 let paises: Pais[] = [];
+let favoritos: Pais[] = JSON.parse(localStorage.getItem('favoritos') || '[]');
+console.log(favoritos);
 
 // Funcion asincrona para buscar pais en el array de paises
 async function buscarPais(): Promise<void> {
@@ -66,7 +68,6 @@ async function buscarPais(): Promise<void> {
     if (paises.length > 0) {
         //Almacena datos en sessionStorage
         sessionStorage.setItem('StoragePaises', JSON.stringify(paises));
-        console.log(sessionStorage);
         //Muestra el primer pais
         indiceActual = 0;
         mostrarPais(paises[indiceActual]);
@@ -92,6 +93,14 @@ async function mostrarPais(pais: Pais): Promise<void> {
         } else {
             console.warn("Elemento li-data2 no encontrado");
         }
+        // Actualizar el estado de la estrella de favorito
+        if (favoritos.some(fav => fav.id === pais.id)) {
+            estrellaFavorito.classList.remove('bi-star');
+            estrellaFavorito.classList.add('bi-star-fill');
+        } else {
+            estrellaFavorito.classList.remove('bi-star-fill');
+            estrellaFavorito.classList.add('bi-star');
+        }
 
     }
 }
@@ -112,7 +121,7 @@ function mostrarAnteriorPais(): void {
     }
 }
 
-// funcion obtener todos paises de la API
+// funcion obtener paises de la API
 async function obtenerPaises(query: string): Promise<Pais[]> {
     try {
         let response = await fetch(`https://restcountries.com/v3.1/name/${query}`);
@@ -136,11 +145,33 @@ botonSiguiente.addEventListener('click', mostrarSiguientePais);
 botonAnterior.addEventListener('click', mostrarAnteriorPais);
 
 //Eventos mouseover y mouseout para la estrella de favorito
-estrellaFavorito.addEventListener('mouseover', () => {
-    estrellaFavorito.classList.remove('bi-star');
-    estrellaFavorito.classList.add('bi-star-fill');
-});
-estrellaFavorito.addEventListener('mouseout', () => {
-    estrellaFavorito.classList.remove('bi-star-fill');
-    estrellaFavorito.classList.add('bi-star');
+// estrellaFavorito.addEventListener('mouseover', () => {
+//         estrellaFavorito.classList.remove('bi-star');
+//         estrellaFavorito.classList.add('bi-star-fill');
+// });
+
+// estrellaFavorito.addEventListener('mouseout', () => {
+//         estrellaFavorito.classList.remove('bi-star-fill');
+//         estrellaFavorito.classList.add('bi-star');
+// });
+
+// Evento clic favorito
+estrellaFavorito.addEventListener('click', () => {
+    let paisActual = paises[indiceActual];
+    // Comprruebo si esta en favoritos
+    let index = favoritos.findIndex(fav => fav.id === paisActual.id);
+    // Si no esta en favoritos, lo añado
+    if (index === -1) {
+        // Añadir
+        favoritos.push(paisActual);
+        estrellaFavorito.classList.remove('bi-star');
+        estrellaFavorito.classList.add('bi-star-fill');
+    } else {
+        // Quitar
+        favoritos.splice(index, 1);
+        estrellaFavorito.classList.remove('bi-star-fill');
+        estrellaFavorito.classList.add('bi-star');
+    }
+    // Almacenar en localStorage
+    localStorage.setItem('favoritos', JSON.stringify(favoritos));
 });

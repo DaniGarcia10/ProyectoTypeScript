@@ -59,7 +59,7 @@ let elemento1 = document.getElementById("li-data1");
 let elemento2 = document.getElementById("li-data2");
 let botonSiguiente = document.getElementById('next-element');
 let botonAnterior = document.getElementById('previous-element');
-let estrellaFavorito = document.getElementById('favorite-star');
+let estrellaFavorito = document.getElementById('star-fav');
 // Variables navegacion
 let indiceActual = 0;
 let paises = [];
@@ -129,7 +129,7 @@ function mostrarAnteriorPais() {
         mostrarPais(paises[indiceActual]);
     }
 }
-// funcion obtener todos paises de la API
+// funcion obtener paises de la API
 function obtenerPaises(query) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -145,18 +145,33 @@ function obtenerPaises(query) {
         }
     });
 }
+//funcion añadir a favoritos
+function añadirFavorito() {
+    let paisFavorito = paises[indiceActual];
+    let favoritos = JSON.parse(localStorage.getItem('Favoritos') || '[]');
+    let existe = favoritos.some((item) => item.getNombre() === paisFavorito.getNombre());
+    if (!existe) {
+        favoritos.push(paisFavorito);
+        localStorage.setItem('Favoritos', JSON.stringify(favoritos));
+        console.log(localStorage);
+    }
+}
 //Evento clic boton buscar
 botonBuscar.addEventListener('click', buscarPais);
 // Evento clic boton siguiente
 botonSiguiente.addEventListener('click', mostrarSiguientePais);
 // Evento clic boton anterior
 botonAnterior.addEventListener('click', mostrarAnteriorPais);
-// Evento mouseover y mouseout para la estrella de favorito
+//Evento clic estrella de favorito
+estrellaFavorito.addEventListener('click', añadirFavorito);
+//Eventos mouseover y mouseout para la estrella de favorito
 estrellaFavorito.addEventListener('mouseover', () => {
-    estrellaFavorito.classList.add('filled');
+    estrellaFavorito.classList.remove('bi-star');
+    estrellaFavorito.classList.add('bi-star-fill');
 });
 estrellaFavorito.addEventListener('mouseout', () => {
-    estrellaFavorito.classList.remove('filled');
+    estrellaFavorito.classList.remove('bi-star-fill');
+    estrellaFavorito.classList.add('bi-star');
 });
 
 
