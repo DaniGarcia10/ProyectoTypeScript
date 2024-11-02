@@ -51,7 +51,6 @@ let estrellaFavorito = document.getElementById('star-fav') as HTMLElement;
 let indiceActual = 0;
 let paises: Pais[] = [];
 let favoritos: Pais[] = JSON.parse(localStorage.getItem('favoritos') || '[]');
-console.log(favoritos);
 
 // Funcion asincrona para buscar pais en el array de paises
 async function buscarPais(): Promise<void> {
@@ -208,6 +207,15 @@ function mostrarFavoritos(): void {
                 papelera.classList.add('bi-trash');
             });
 
+            // Evento clic para eliminar el favorito
+            papelera.addEventListener('click', () => {
+                let index = parseInt(papelera.getAttribute('data-index') || '0');
+                favoritos.splice(index, 1);
+                // Almacenar en localStorage
+                localStorage.setItem('favoritos', JSON.stringify(favoritos));
+                // Actualizar la tabla
+                mostrarFavoritos();
+            });
         });
     }
 }
