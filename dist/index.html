@@ -29,6 +29,9 @@
                 <li class="nav-item">
                   <a class="nav-link" id="a-data-storage" aria-current="div-data-storage" href="#">Favoritos</a>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="a-data-deleted" aria-current="div-data-deleted" href="#">Papelera</a>
+                </li>
               </ul>
             </div>
           </div>
@@ -66,7 +69,6 @@
                                     <i class="bi bi-star" id="star-fav" style="color: #c8b700;"></i>
                                 </div>
                             </div>
-
                         </div>
                         <ul class="list-group list-group-flush" id="card-data">
                           <li class="list-group-item" id="li-data1">Data 1</li>
@@ -99,6 +101,40 @@
                   <th scope="col">Nombre</th>
                   <th scope="col">Capital</th>
                   <th scope="col">Region</th>
+                  <th scope="col">Dia de la semana</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="table-group-divider">
+                <tr>
+                  <th scope="row">1</th>
+                  <td>Data 1</td>
+                  <td>Data 2</td>
+                  <td>Data 3</td>
+                  <td><i class="bi bi-trash"></i></td>
+                </tr>
+                <tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        </div>
+        <div class="row d-none" id="div-data-deleted">
+          <div class="row">
+            <div class="col-12">
+              <h4 class="h-description"> A continuación se muestra una tabla con todos los elementos favoritos almacenados en el navegador:</h4>
+            </div>
+          </div>  
+        <div class="row">
+          <div class="row">
+            <table class="table" id="table-deleted">
+              <thead>
+                <tr>
+                  <th scope="col">id</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Capital</th>
+                  <th scope="col">Region</th>
+                  <th scope="col">Dia de la semana</th>
                   <th scope="col">Acciones</th>
                 </tr>
               </thead>

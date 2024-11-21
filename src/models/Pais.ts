@@ -4,11 +4,14 @@ export default class Pais implements IPais {
     nombre: string;
     capital: string;
     region: string;
-    constructor(id:string, nombre: string, capital: string, region: string) {
+    diaComienzoSemana: string;
+
+    constructor(id:string, nombre: string, capital: string, region: string, diaComienzoSemana: string) {
         this.id = id;
         this.nombre = nombre;
         this.capital = capital;
         this.region = region;
+        this.diaComienzoSemana = diaComienzoSemana;
     }
 
     //Getters
@@ -29,8 +32,8 @@ export default class Pais implements IPais {
         return this.region;
     }
 
-    getJSON() {
-        return JSON.stringify(this);
+    getDiaComienzoSemana(): string {
+        return this.diaComienzoSemana
     }
 
 }

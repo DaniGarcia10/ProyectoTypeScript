@@ -4,4 +4,5 @@ export default interface IPais {
     nombre: string;
     capital: string;
     region: string;
+    diaComienzoSemana: string;
 }

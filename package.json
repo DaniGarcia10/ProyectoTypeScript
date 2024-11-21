@@ -7,7 +7,7 @@
     "tsnode": "cd src && ts-node index.ts",
     "start": "nodemon",
     "transpilation": "tsc",
-    "build": "webpack", 
+    "build": "webpack",
     "start-web": "webpack serve"
   },
   "repository": {
